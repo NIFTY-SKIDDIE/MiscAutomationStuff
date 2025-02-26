@@ -1,0 +1,181 @@
+//Developed by Sam Shapira https://linkedin.com/in/samshapira
+package locales;
+import java.time.Duration;
+import java.util.List;
+import static locales.utilities.PropertiesReader.getProperty;
+import org.openqa.selenium.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import java.util.Arrays;
+import java.util.Objects;
+import org.openqa.selenium.interactions.Actions;
+import locales.utilities.Common;
+
+public class FastModel {
+    static WebDriver driver;
+
+    public final static By TextFieldXPATH = By.xpath("//*[@id='alphanumericInput']");  //This XPATH is for the text field in the FastModel staging env
+    //    public final static By TextFieldXPATH = By.xpath("//*[@id='myInput']");  //This XPATH is for the text field in the HTML file
+    public final static By emailFieldXPATH = By.xpath("//input[@id='email']");
+    public final static By passwordFieldXPATH = By.xpath("//input[@id='password']");
+    public final static By signInCTAXPATH = By.xpath("//button[normalize-space()='SIGN IN']");
+    public final static By scoutsTabXPATH = By.xpath("//a[@id='library-nav-link']");
+    public final static By newScoutCTAXPATH = By.cssSelector("#start-new-scout-button");
+    //public final static By newScoutModalXPATH = By.xpath("//section[@class='pd-md']");
+    public final static By cancelCTAXPATH = By.cssSelector("#cancel-createReportButton");
+    public final static By createCTAXPATH = By.xpath("//span[@id='createReportButton']");
+    public final static By opponentTeamDropdownXPATH = By.xpath("(//div[@class='Select-control'])[1]");
+    public final static By radioButton1XPATH = By.xpath("(//div[@class='md-font flex-shrink-0 helvetica-neue-medium'])[1]");
+
+    //comment out when testing locally, uncomment when testing in staging env
+    // Navigate to FastModel staging env, where the text field does not automatically reject non-alphanumerical characters
+//    @BeforeClass
+//    public static void start() {
+//        driver = Common.initTest(getProperty("host"), Common.browser.Chrome);
+//
+//    }
+
+//    Test with local file - text field which automatically removes all non-alphanumeric values (TC_1 negative test)
+    @BeforeClass
+    public static void start() {
+        String filePath = "file:///C:/Users/Admin/Desktop/nanc.html"; //nanc_negative for negative test
+        driver = Common.initTest(filePath, Common.browser.Chrome);
+    }
+
+    @AfterClass
+    public static void stop() {
+        driver.quit();
+    }
+
+
+    //TC_1
+    @Test
+
+    //This test will only check if the text box is accepting non-alphanumerical values without a 'submit' action.
+    //If the requirement is asking to attempt submitting the form with the non-alphanumerical values,
+    //Extra logic should be implemented to verify each value in the array only after invalid input indication on submit action
+    //This can't be done currently since the functionality for error indication is not yet implemented on the webpage
+    //This test is designed to work with an implementation which automatically rejects non-alphanumerical values from the input
+    public void A_Verify_nonAlphanumerical_Input() throws InterruptedException {
+        //***Prerequisites***:
+
+        //uncomment when testing in staging env. comment out when testing locally
+        //Sign in to staging env
+//        System.out.println("Signing In...");
+//        WebElement emailField = driver.findElement(emailFieldXPATH);
+//        WebElement passwordField = driver.findElement(passwordFieldXPATH);
+//        WebElement loginButton = driver.findElement(signInCTAXPATH);
+//        emailField.sendKeys("shapira@qaproject.com");
+//        passwordField.sendKeys("qaproject8o3");
+//        loginButton.click();
+//        System.out.println("Sign in succeeded, begin test...");
+
+        //Navigate to the text field under test
+//        driver.findElement(scoutsTabXPATH).click();
+//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+//        Thread.sleep(3000);
+//        driver.findElement(newScoutCTAXPATH).click();
+
+
+        //Test begin
+        String TestName = "Verify only alphanumerical values are accepted in the text field";
+        Common.beginTest(TestName);
+
+        WebElement textField = driver.findElement(TextFieldXPATH);
+
+        String alphanumericPattern = "^[a-zA-Z0-9]*$";
+
+        // List of common non-alphanumeric characters
+        List<String> nonAlphanumericCharacters = Arrays.asList(
+                "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "-", "+",
+                "{", "}", "[", "]", "|", "\\", ":", ";", "\"", "'", "<", ">", ",", ".", "?", "/", " ", "1", "a"
+                //^Last 2 values are alphanumeric for negative test
+        );
+
+        boolean overallResult = true; // Initialize overall result to true
+
+        for (int j = 0; j < nonAlphanumericCharacters.size(); j++) {
+            String character = nonAlphanumericCharacters.get(j);
+            String inputText = "inputValue123" + character;
+            textField.clear();
+            textField.sendKeys(inputText);
+            //Thread.sleep(100);
+//            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(250));
+//            wait.until(ExpectedConditions.attributeToBe(textField, "value", inputText));
+
+            String enteredText = textField.getAttribute("value");
+
+            boolean isAlphanumeric = enteredText.matches(alphanumericPattern);
+            System.out.println("Input: " + inputText + " | Result: " + (isAlphanumeric ? "Valid - Only alphanumerical values are in the input" : "Invalid - There is a non-alphanumerical value in the input"));
+
+            // Update the overall result if any non-alphanumeric input is found
+            if (!isAlphanumeric) {
+                overallResult = false;
+            }
+        }
+        Common.endTest(TestName);
+        // Assert the overall result after iterating through all inputs
+        // Assertion error is expected since it is simply verifying if non-alphanumeric values were accepted in the text field
+        // This is assuming the JS code wouldn't allow any non-alphanumerical values prior to the form submit /error indication on submit attempt
+        Assert.assertTrue(overallResult, "At least one entered text input is non-alphanumeric");
+
+    }
+
+    //TC_2
+    @Test
+    public void B_Verify_No_Cancel_CTA() {
+        // Assertion error is currently expected since the 'cancel' button still exists on the webpage
+            String TestName = "Verify no cancel button exists on the 'NEW OPPONENT SCOUT' modal window";
+        Common.beginTest(TestName);
+
+        System.out.println("Verifying the cancel button does not exist on the modal... ");
+        if (driver.findElements(cancelCTAXPATH).size() != 0) {
+            Assert.fail("Error, cancel button exists");
+        } else {
+            System.out.println("Cancel button does not exist- As expected.");
+
+            Common.endTest(TestName);
+        }
+
+    }
+
+
+    //TC_3
+    @Test
+    public void C_Verify_CTA_Becomes_Enabled() throws InterruptedException {
+        // This test is expected to pass since the functionality being tested is already implemented on the front-end
+        String TestName = "Verify the 'CREATE' button only becomes enabled when all the fields have values";
+        Common.beginTest(TestName);
+
+        // 1st Field (text box):
+        WebElement textBox = driver.findElement(TextFieldXPATH);
+        textBox.clear();
+        textBox.sendKeys("SRN");
+
+        // 2nd Field (dropdown options):
+        WebElement dropdown = driver.findElement(opponentTeamDropdownXPATH);
+        dropdown.click();
+
+        Actions actions = new Actions(driver);
+        actions.sendKeys("B").perform();
+        actions.sendKeys(Keys.ENTER).perform();
+
+        // 3rd Field (radio button):
+        WebElement radioButton = driver.findElement(radioButton1XPATH);
+        radioButton.click();
+
+        // Get the 'cursor' CSS attribute of the "CREATE" button
+        WebElement createButton = driver.findElement(createCTAXPATH);
+        String cursorStyle = createButton.getCssValue("cursor");
+
+        // Verify if the "CREATE" button is enabled based on the 'cursor' style (When disabled, the attribute == 'not-allowed;')
+        // When enabled, the attribute == 'pointer;'
+        if (Objects.equals(cursorStyle, "pointer")) {
+            System.out.println("Test passed: CREATE button is enabled.");
+        } else {
+            System.out.println("Test failed: CREATE button is disabled.");
+            Assert.fail("CREATE button is not enabled with values in the required fields as expected.");
+        }
+        Common.endTest(TestName);
+    }
+}
