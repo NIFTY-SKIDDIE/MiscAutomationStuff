@@ -1,0 +1,773 @@
+package locales.de_de;
+
+import locales.utilities.Common;
+import locales.utilities.Common.dimension;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.sql.Driver;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static locales.utilities.PropertiesReader.getProperty;
+
+public class TOC_of_TOCs_Calibration_Tools {
+    static WebDriver driver;
+    public final static By LeftAccordionXPATH = By.xpath("//div[@id='accordion-left']");
+    public final static By BreadCrumbsXPATH = By.xpath("//*[@id='breadcrumbs']/ol/li");
+    public final static By BreadCrumb1XPATH = By.xpath("//*[@id='breadcrumbs']/ol/li[1]/a");
+    public final static By BreadCrumb2XPATH = By.xpath("//*[@id='breadcrumbs']/ol/li[2]/a");
+    public final static By BreadCrumbArrowsXPATH = By.xpath("//*[@id='breadcrumbs']/ol/li/span");
+    public final static By BreadCrumbArrow1XPATH = By.xpath("//*[@id='breadcrumbs']/ol/li[1]/span");
+    public final static By BreadCrumbArrow2XPATH = By.xpath("//*[@id='breadcrumbs']/ol/li[2]/span");
+    public final static By HeroImageXPATH = By.xpath("//div[@id='hero-media']");
+    public final static By TOCDescriptionXpath = By.xpath("//div[@id='toc-description']");
+    public final static By CTAButton = By.cssSelector("a[class='button toc-cta']");
+    public static final String H1TITLE = "//h1[@id='hero-title']";
+    public static final String H2TITLE = "//*[@id='toc-related-assets']/h2";
+    public static final By H2TITLEXPATH = By.xpath("//*[@id='toc-related-assets']/h2");
+    public final static By TOCChildCatImgXPATH = By.xpath("//*[@id='toc-child-categories']/a/img");
+    public final static By TOCChildCatXPATH = By.xpath("//*[@id='toc-child-categories']/a");
+    public final static String altXPATH = "//*[@id='toc-child-categories']/a/img";
+    public final static String altXPATH1 = "//*[@id='related-assets-articles']//a//img";
+    public final static String TOCChildCat1XPATH = "//*[@id='toc-child-categories']/a[1]";
+    public final static String TOCChildCat2XPATH = "//*[@id='toc-child-categories']/a[2]";
+    public final static String TOCChildCat3XPATH = "//*[@id='toc-child-categories']/a[3]";
+    public final static String TOCChildCat4XPATH = "//*[@id='toc-child-categories']/a[4]";
+    public final static String TOCChildCat5XPATH = "//*[@id='toc-child-categories']/a[5]";
+    public final static String optional6thTOCChildCatXPATH = "//*[@id='toc-child-categories']/a[6]";
+    public final static By TOCChildCatTitlesXPATH = By.xpath("//*[@id='toc-child-categories']/a/div/h3");
+    public final static By ShopNowCTAXPATH0 = By.xpath("//button[@class='btn btn-yellow'][normalize-space()='Shop now']");
+    public final static By LearnMoreCTAXPATH = By.xpath("//*[@id='toc-child-categories']//button");
+    public final static By SecondaryContentXPATH = By.xpath("//*[@id='toc-feat-articles']/div/p");
+    public final static String SecondaryContentIMGXPATH = ("//*[@id='toc-feat-articles']/div//img");
+    public final static By SecondaryContentTitlesXPATH = By.xpath("//*[@id='toc-feat-articles']/div/h3");
+    public final static By SecondaryContentSectionsXPATH = By.xpath("//*[@id='toc-feat-articles']/div");
+    public final static By RelatedAssetsXPATH1 = By.xpath("//*[@id='related-assets-articles']/a");
+    public final static By RelatedAssetsTitleXPATH = By.xpath("//*[@id='related-assets-articles']//a//h3");
+    public final static By RelatedAssetsIMGXPATH = By.xpath("//*[@id='related-assets-articles']//a//img");
+    public final static By RelatedAssetDESCXPATH = By.xpath("//*[@id='toc-related-asset-desc']");
+    public final static By ActualStringXPATH = By.xpath("//*[@id='toc-related-asset-desc']");
+    public final static By ProcessCalibratorsXPATH = By.xpath("//*[@id='toc-related-asset-desc']");
+
+
+    @BeforeClass
+    public static void start() {
+        driver = Common.initTest(getProperty("host") + "de-de/produkte/kalibratoren", Common.browser.Chrome);
+    }
+
+
+    @AfterClass
+    public static void stop() {
+        driver.close();
+        driver.quit();
+    }
+
+
+    //TC1 Verify URL is correct and no left navigation panel is present
+    @Test
+    public void Z_VerifyPage() {
+        String TestName = "Verify the URL is correct, page is not 404, and no left accordion panel is present ";
+        Common.beginTest(TestName);
+        Common.waitForPageLoad();
+        Common.getCurrentURL();
+        //URL/404 validation
+        String url1 = driver.getCurrentUrl();
+        System.out.println(driver.getCurrentUrl());
+        boolean pg4041 = Common.isPage404ing();
+        String msg1 = "Does page 404?";
+        System.out.println(msg1);
+        System.out.println(pg4041);
+        boolean isURL1Correct = url1.contentEquals(getProperty("host") + "de-de/produkte/kalibratoren");
+        System.out.println("URL is correct and page not 404 - " + isURL1Correct);
+        Assert.assertTrue(isURL1Correct && !pg4041, "error?   ");
+
+        //verify no left accordion menu is present
+        System.out.println("Validating no left accordion menu exists: ");
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOfElementLocated(LeftAccordionXPATH));
+          //  System.out.println("Unexpected element present");
+            Assert.fail("Error, Left accordion exists when it shouldn't");
+
+        } catch (TimeoutException | NoSuchElementException e) {
+            System.out.println("Left accordion doesn't exist, as expected");
+
+        }
+    }
+
+
+    //TC2 Verify breadcrumbs
+    @Test
+    public void VerifyBreadCrumbs() {
+        String VerifyBreadCrumbs = "Verify breadcrumbs";
+        Common.beginTest(VerifyBreadCrumbs);
+        Common.waitForPageLoad();
+        //validate and count breadcrumbs
+        WebElement breadcrumb = driver.findElement(BreadCrumbsXPATH);
+        boolean isBreadCrumbPresent = Common.isElementPresent(breadcrumb);
+        System.out.println("breadcrumbs are present: " + isBreadCrumbPresent);
+        driver.findElement(BreadCrumbsXPATH);
+        int count = driver.findElements(BreadCrumbsXPATH).size();
+        Assert.assertEquals(count, 3, "Wrong count in breadcrumbs");
+        System.out.println("count is correct. Count is: " + count);
+
+        //validate and count breadcrumb arrows
+        WebElement breadcrumbarrows = driver.findElement(BreadCrumbArrowsXPATH);
+        boolean isBreadCrumbArrowsPresent = Common.isElementPresent(breadcrumbarrows);
+        System.out.println("breadcrumb arrows are present: " + isBreadCrumbArrowsPresent);
+        driver.findElement(By.xpath("//*[@id=\"breadcrumbs\"]/ol/li/span"));
+        int count1 = driver.findElements(By.xpath("//*[@id=\"breadcrumbs\"]/ol/li/span")).size();
+        Assert.assertEquals(count1, 2, "Wrong count in breadcrumbs");
+        System.out.println("count is correct. Count is: " + count1);
+
+        // Validate breadcrumbs arrows color
+//        //1st arrow- expected black color
+        WebElement FirstArrow = driver.findElement(BreadCrumbArrow1XPATH);
+        String FirstArrowColor = Common.getHexBorderColorOfElement(FirstArrow);
+        System.out.println(FirstArrowColor);
+        boolean isArrow1ColorCorrect = FirstArrowColor.contains("#212121");
+        System.out.println("First arrow renders in (#212121): " + isArrow1ColorCorrect);
+        Assert.assertTrue(isArrow1ColorCorrect, "First arrow is wrong color?");
+        //2nd arrow- expected yellow color
+        WebElement SecondArrow = driver.findElement(BreadCrumbArrow2XPATH);
+        String SecondArrowColor = Common.getHexBorderColorOfElement(SecondArrow);
+        System.out.println(SecondArrowColor);
+        boolean isArrow2ColorCorrect = SecondArrowColor.contains("#ffc20e");
+        System.out.println("Second arrow renders in (#ffc20e): " + isArrow2ColorCorrect);
+        Assert.assertTrue(isArrow2ColorCorrect, "Second arrow is wrong color?");
+
+        //validate parent breadcrumbs href
+        //home breadcrumb
+        WebElement PBC1 = driver.findElement(BreadCrumb1XPATH);
+        System.out.println("Validating parent breadcrumb href:");
+        String val1 = PBC1.getAttribute("href");
+        System.out.println("href value of home breadcrumb: " + val1);
+        boolean ishref1Correct = val1.contentEquals(getProperty("host") + "de-de");
+        Assert.assertTrue(ishref1Correct, "href is matching ");
+        System.out.println("href is matching:  " + ishref1Correct);
+        //Products breadcrumb
+        WebElement PBC2 = driver.findElement(BreadCrumb2XPATH);
+        String val2 = PBC2.getAttribute("href");
+        System.out.println("href value of products breadcrumb: " + val2);
+        boolean ishref2Correct = val2.contentEquals(getProperty("host") + "de-de/produkte");
+        Assert.assertTrue(ishref2Correct, "href is matching ");
+        System.out.println("href is matching:  " + ishref2Correct);
+        Common.endTest(VerifyBreadCrumbs);
+    }
+
+    //TC3 Verify hero image
+    @Test
+    public void VerifyHeroImage() {
+        System.out.println("Validating Hero image:  ");
+        WebElement heroImage = driver.findElement(HeroImageXPATH);
+        Common.isElementPresent(heroImage);
+        boolean isheroimagedisplayed = Common.isElementPresent(heroImage);
+        System.out.println("Image is present:  " + isheroimagedisplayed);
+        Assert.assertTrue(isheroimagedisplayed, " Hero image is broken?");
+    }
+
+
+    //TC_4
+
+    @Test
+    public void VerifyH1_CTA_TOCDesc() {
+        //verify H1 header is bold
+        String VerifyH1Header = "Verify H1 header, CTA, description field";
+        Common.beginTest(VerifyH1Header);
+        Common.waitForPageLoad();
+
+        WebElement h1 = driver.findElement(By.xpath(H1TITLE));
+        String tagTitle = Common.getTxtOfElement(h1);
+        driver.findElement(By.cssSelector("#hero-title")).isDisplayed();
+        System.out.println("The H1 title returns as: " + tagTitle);
+        String font = h1.getCssValue("font-weight");
+        boolean ish1Correct = tagTitle.equals("Prozesskalibratoren");
+        boolean isfPTitleFont = font.equals("700");
+        System.out.println("The H1 title is matching: " + ish1Correct);
+        System.out.println("H1 title is bold: " + isfPTitleFont);
+        AssertJUnit.assertTrue("H1 title is not in bold", isfPTitleFont && ish1Correct);
+
+        //verify "get a free demo" CTA is enabled and has proper href
+        //Verify CTA is displayed
+        //verify CTA href
+        WebElement CTA = driver.findElement(CTAButton);
+        Assert.assertTrue(CTA.isDisplayed());
+        System.out.println("'Get a free demo' CTA displayed? :" + CTA.isDisplayed());
+        System.out.println("Validating 'Get a free demo' CTA button href:");
+        String val = CTA.getAttribute("href");
+        System.out.println("href value of CTA: " + val);
+        boolean ishrefCorrect = val.contains("IG-GLOBAL-MULTI-2019-DemoContactRequest-DEDE-LP");
+        Assert.assertTrue(ishrefCorrect, "href is matching ");
+        System.out.println("href is matching:  " + ishrefCorrect);
+
+        //Verify description field
+        boolean desc = driver.findElements(TOCDescriptionXpath).size() == 0;
+        if (!desc) {
+            WebElement descExists = driver.findElement(TOCDescriptionXpath);
+            Boolean optionalDesc = Common.isElementPresent(descExists);
+            System.out.println("TOC description is displayed: " + optionalDesc);
+            boolean isOptionalDescDispCorrectly = optionalDesc;
+            AssertJUnit.assertTrue("No TOC description displayed", isOptionalDescDispCorrectly);
+            Common.endTest(VerifyH1Header);
+        } else {
+            System.out.println("TOC description is not displayed");
+
+
+        }
+    }
+
+
+    //TC_5
+
+    @Test
+    public void VerifyTOC_ChildCategories() {
+        //verify are displayed
+        String TestName = "Validate TOC child categories are present";
+        Common.beginTest(TestName);
+        boolean categories = driver.findElements(TOCChildCatXPATH).size() == 0;
+        if (!categories) {
+            WebElement cate = driver.findElement(TOCChildCatXPATH);
+            boolean isCategoryDisplayingCorrectly = cate.isDisplayed();
+            System.out.println("TOC child categories are displayed: " + isCategoryDisplayingCorrectly);
+            AssertJUnit.assertTrue(driver.getTitle() + "TOC child categories NOT displayed: ", isCategoryDisplayingCorrectly);
+
+        } else {
+            Assert.fail("Error, no TOC child categories are displayed");
+
+        }
+
+        Common.waitForPageLoad();
+        //verify each category has an image
+        String testName = "Verify each category has an image ";
+        List<WebElement> productCategories = driver.findElements(TOCChildCatImgXPATH);
+        List<WebElement> productImages = driver.findElements(TOCChildCatXPATH);
+        AssertJUnit.assertEquals(testName, productCategories.size(), productImages.size());
+        System.out.println("Verifying each TOC child category has an image:");
+        int catCount = productCategories.size();
+        int catImageCount = productImages.size();
+        System.out.println("Count for child categories: " + catImageCount);
+        boolean isImageCountCorrect = catImageCount <= 6;
+        System.out.println("Count for child category images: " + catImageCount);
+        boolean isCategoryCountCorrect = catCount <= 6;
+        boolean arebothmatching = catImageCount == catCount;
+        AssertJUnit.assertTrue("Count is matching: ", isImageCountCorrect);
+        AssertJUnit.assertTrue("Count is matching: ", isCategoryCountCorrect);
+        AssertJUnit.assertTrue("Both counts are matching: ", arebothmatching);
+        System.out.println("Both counts matching up to 6?=>" + arebothmatching);
+        Common.endTest(TestName);
+    }
+
+    //verify title  and alt tags
+    @Test
+    public void VerifyAltTags() {
+        String TestName1 = "Verify alt tags for child category images";
+        Common.beginTest(TestName1);
+        System.out.println("Validating Alt tags: ");
+        List<WebElement> altTag = driver.findElements(By.xpath(altXPATH));
+        int count = altTag.size();
+        List<WebElement> titleTag = driver.findElements(By.xpath(altXPATH));
+        for (int i = 0; i < count; i++) {
+            String x = Common.getImageAltOfElement(altTag.get(i));
+            boolean checkalt = x != null;  //Common.isElementPresent(altTag.get(i));
+            Assert.assertTrue(checkalt, "Alt tag not present for all images");
+            String x1 = Common.getTitleAttrOfElement(titleTag.get(i));
+            boolean checktitle1 = Common.isElementPresent(titleTag.get(i));
+            System.out.println("'" + x + "'" + " image alt tags are present: " + checkalt);
+
+        }
+    }
+
+    //verify each TOC child category is rendering in correct color
+    @Test
+    public void VerifyTOC_ChildCategory_Colors() {
+        //driver.navigate().to(getProperty("host") + "de-de/produkte/kalibratoren");
+        String VerifyChildTOCCatColors = "Verify each child category is rendering in correct color";
+        Common.beginTest(VerifyChildTOCCatColors);
+
+        //1st
+        WebElement ShopNowCTA1 = driver.findElement(By.xpath(TOCChildCat1XPATH));
+        String ShopNowCTAColorCorrect = Common.getHexColorOfElement(ShopNowCTA1);
+
+        boolean ischildtoccat1colorcorrect = ShopNowCTAColorCorrect.contentEquals("#555555");
+        System.out.println("1st TOC child category is displayed in: " + ShopNowCTAColorCorrect + "  Color is correct: " + ischildtoccat1colorcorrect);
+        Assert.assertTrue(ischildtoccat1colorcorrect, "1st child category does not render in #555555");
+        //2nd
+        WebElement ShopNowCTA2 = driver.findElement(By.xpath(TOCChildCat2XPATH));
+        String ShopNowCTAColorCorrect2 = Common.getHexColorOfElement(ShopNowCTA2);
+        boolean ischildtoccat1colorcorrect2 = ShopNowCTAColorCorrect2.contentEquals("#5e87a3");
+        System.out.println("2nd TOC child category is displayed in: " + ShopNowCTAColorCorrect2 + "  Color is correct: " + ischildtoccat1colorcorrect2);
+        Assert.assertTrue(ischildtoccat1colorcorrect2, "1st child category does not render in #5e87a3");
+        //3rd
+        WebElement ShopNowCTA3 = driver.findElement(By.xpath(TOCChildCat3XPATH));
+        String ShopNowCTAColorCorrect3 = Common.getHexColorOfElement(ShopNowCTA3);
+        boolean ischildtoccat1colorcorrect3 = ShopNowCTAColorCorrect3.contentEquals("#48a7b9");
+        System.out.println("3rd TOC child category is displayed in: " + ShopNowCTAColorCorrect3 + "  Color is correct: " + ischildtoccat1colorcorrect3);
+        Assert.assertTrue(ischildtoccat1colorcorrect3, "1st child category does not render in #48a7b9");
+        //4th
+        WebElement ShopNowCTA4 = driver.findElement(By.xpath(TOCChildCat4XPATH));
+        String ShopNowCTAColorCorrect4 = Common.getHexColorOfElement(ShopNowCTA4);
+        boolean ischildtoccat1colorcorrect4 = ShopNowCTAColorCorrect4.contentEquals("#555555");
+        System.out.println("4th TOC child category is displayed in: " + ShopNowCTAColorCorrect4 + "  Color is correct: " + ischildtoccat1colorcorrect4);
+        Assert.assertTrue(ischildtoccat1colorcorrect4, "4th child category does not render in #555555");
+        //5th
+//        WebElement ShopNowCTA5 = driver.findElement(By.xpath(TOCChildCat5XPATH));
+//        String ShopNowCTAColorCorrect5 = Common.getHexColorOfElement(ShopNowCTA5);
+//        boolean ischildtoccat1colorcorrect5 = ShopNowCTAColorCorrect5.contentEquals("#5e87a3");
+//        System.out.println("5th TOC child category is displayed in: " + ShopNowCTAColorCorrect5 + "  Color is correct: " + ischildtoccat1colorcorrect5);
+//        Assert.assertTrue(ischildtoccat1colorcorrect5, "5th child category does not render in #5e87a3");
+//        System.out.println("Checking for a 6th TOC child category... ");
+
+        //if 5th TOC child category exists, validate color. otherwise, pass.
+//        boolean tocChildCat = driver.findElements(By.xpath(TOCChildCat5XPATH)).size() == 0;
+//        if (!tocChildCat) {
+//            WebElement TOCChildCatExists = driver.findElement(By.xpath(TOCChildCat5XPATH));
+//            Boolean optionalDesc = Common.isElementPresent(TOCChildCatExists);
+        driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TOCChildCat5XPATH)));
+
+            //System.out.println("A 5th TOC child category exists");
+
+
+            WebElement ShopNowCTA5 = driver.findElement(By.xpath(TOCChildCat5XPATH));
+            String ShopNowCTAColorCorrect5 = Common.getHexColorOfElement(ShopNowCTA5);
+            boolean ischildtoccat1colorcorrect5 = ShopNowCTAColorCorrect5.contentEquals("#5e87a3");
+            System.out.println("5th TOC child category is displayed in: " + ShopNowCTAColorCorrect5 + "  Color is correct: " + ischildtoccat1colorcorrect5);
+            Assert.assertTrue(ischildtoccat1colorcorrect5, "1st child category does not render in #5e87a3");
+
+            //  System.out.println("Optional description display on page above TOC? " + optionalDesc);
+            //  boolean isOptionalDescDispCorrectly = optionalDesc;
+            //  AssertJUnit.assertTrue("Optional description does not display on page above TOC", isOptionalDescDispCorrectly);
+
+
+        }catch(TimeoutException | NoSuchElementException e) {
+            System.out.println("A 5th TOC child category does not exist, moving on...");
+        }
+
+//        } else {
+//            System.out.println("A 5th TOC child category does not exist, moving on...");
+//            Common.endTest(VerifyChildTOCCatColors);
+//
+//        }
+
+
+
+
+        //if 6th TOC child category exists, validate color. otherwise, pass.
+        boolean tocChildCat1 = driver.findElements(By.xpath(optional6thTOCChildCatXPATH)).size() == 0;
+        if (!tocChildCat1) {
+            WebElement TOCChildCatExists = driver.findElement(By.xpath(optional6thTOCChildCatXPATH));
+            Boolean optionalDesc = Common.isElementPresent(TOCChildCatExists);
+
+            WebElement ShopNowCTA6 = driver.findElement(By.xpath(optional6thTOCChildCatXPATH));
+            String ShopNowCTAColorCorrect6 = Common.getHexColorOfElement(ShopNowCTA6);
+            boolean ischildtoccat1colorcorrect6 = ShopNowCTAColorCorrect6.contentEquals("#48a7b9");
+            System.out.println("6th TOC child category is displayed in: " + ShopNowCTAColorCorrect6 + "  Color is correct: " + ischildtoccat1colorcorrect6);
+            Assert.assertTrue(ischildtoccat1colorcorrect6, "1st child category does not render in #48a7b9");
+
+            System.out.println("Optional description display on page above TOC? " + optionalDesc);
+            boolean isOptionalDescDispCorrectly = optionalDesc;
+            AssertJUnit.assertTrue("Optional description does not display on page above TOC", isOptionalDescDispCorrectly);
+        } else {
+            System.out.println("A 6th TOC child category does not exist, moving on...");
+            Common.endTest(VerifyChildTOCCatColors);
+
+        }
+
+    }
+
+    //verify each TOC child category has a text title
+    @Test
+    public void VerifyTOC_ChildCategory_Titles() {
+
+        String VerifyChildTOCCatTitles = "Verify each child category has a title";
+        Common.beginTest(VerifyChildTOCCatTitles);
+        String testName = "Verify there is a Title for each TOC child category ";
+        System.out.println("Validating Title of each TOC child category: ");
+
+        WebElement events2 = driver.findElement(TOCChildCatTitlesXPATH);
+        boolean AreTitlesDisplayed = Common.isElementPresent(events2);
+        System.out.println("Titles are displayed : " + AreTitlesDisplayed);
+
+        List<WebElement> events1 = driver.findElements(TOCChildCatTitlesXPATH);
+
+        for (int i = 0; i < events1.size(); i++) {
+            events1 = driver.findElements(TOCChildCatTitlesXPATH);
+            String txt = events1.get(i).getText();
+            System.out.println(txt);
+            String[] title = txt.split("Title");
+            Assert.assertEquals(title.length, 1, testName);
+
+        }
+        Common.endTest(testName);
+
+    }
+
+
+    //verify shop now CTA's
+    @Test
+    public void VerifyTOC_ChildCategory_LearnMoreCTA() {
+        //verify Shop now CTA's
+
+        String testName = "Verify each category has a CTA ";
+        Common.beginTest(testName);
+        List<WebElement> productCategories = driver.findElements(TOCChildCatXPATH);
+        List<WebElement> productImages = driver.findElements(LearnMoreCTAXPATH);
+        AssertJUnit.assertEquals(testName, productCategories.size(), productImages.size());
+        System.out.println("Verifying each TOC child category has a CTA:");
+        int catCount = productCategories.size();
+        int catImageCount = productImages.size();
+        System.out.println("Count for child categories: " + catImageCount);
+        boolean isImageCountCorrect = catImageCount <= 6;
+        System.out.println("Count for child category CTA's: " + catImageCount);
+        boolean isCategoryCountCorrect = catCount <= 6;
+        boolean arebothmatching = catImageCount == catCount;
+        AssertJUnit.assertTrue("Count is matching: ", isImageCountCorrect);
+        AssertJUnit.assertTrue("Count is matching: ", isCategoryCountCorrect);
+        AssertJUnit.assertTrue("Both counts are matching: ", arebothmatching);
+        System.out.println("Both counts matching up to 6?=>" + arebothmatching);
+        Common.endTest(testName);
+        {
+
+
+        }
+
+    }
+
+
+    //validate shop now CTA text and color
+    @Test
+
+    public void VerifyCTAColorText() {
+        String TestName = "Verify there is a CTA rendering in yellow with black 'Learn more' text";
+        Common.beginTest(TestName);
+        List<WebElement> buybuttons = driver.findElements(LearnMoreCTAXPATH);
+        System.out.println("Total 'Learn more' CTA's: " + buybuttons.size());
+        //String actualString = buybuttons.get(0).getAttribute("innerText");
+        //Assert.assertEquals(actualString, "Weitere Informationen");
+        boolean isDESCLocalized = driver.findElement(ActualStringXPATH).isDisplayed();
+        System.out.println("CTA text is correct for locale: " + isDESCLocalized);
+        boolean exists = driver.findElements(LearnMoreCTAXPATH).size() == 0;
+        if (!exists) {
+            List<WebElement> tosTag = driver.findElements(LearnMoreCTAXPATH);
+            for (int j = 0; j < tosTag.size(); j++) {
+
+                WebElement tag = driver.findElement(LearnMoreCTAXPATH);
+                String actualString = tosTag.get(j).getAttribute("innerText");
+                Assert.assertEquals(actualString, "Weitere Informationen");
+                String ctaColor = Common.getHexColorOfElement(tag);
+                boolean isColorCorrect = ctaColor.contains("#ffc20e");
+                String ctaText = Common.getTxtOfElement(tag);
+                String ctaTextColor = Common.getHexFontColorOfElement(tag);
+                boolean isctaTextColorCorrect = ctaTextColor.contains("#212121");
+                System.out.println("CTA rendering " + " in yellow (#ffc20e): " + isColorCorrect);
+                System.out.println("has a text of " + ctaText + " in black (#212121): " + isctaTextColorCorrect);
+                AssertJUnit.assertTrue(tag + "does not have an CTA rendering in yellow and black text", isColorCorrect && isctaTextColorCorrect);
+
+            }
+
+        } else {
+            System.out.println("CTAs are missing? ");
+            Assert.fail("CTAs are missing?");
+
+        }
+
+        Common.endTest(TestName);
+    }
+
+
+    //TC_6
+//Verify the section contains 2 blocks at 50% each.
+
+
+    @Test
+    public void VerifySecondaryContentSection() {
+        String TestName = "Verify the section contains 2 columns at 50% each";
+        Common.beginTest(TestName);
+        Common.scrollDown();
+        Common.waitForPageLoad();
+        List<WebElement> sectionCol1 = driver.findElements(SecondaryContentXPATH);
+        int getHeight = sectionCol1.get(0).getSize().getHeight();  //Common.getElementDimensions(sectionCol1.get(0), dimension.Height);
+        int getWidth = sectionCol1.get(0).getSize().getWidth();  //Common.getElementDimensions(sectionCol1.get(0), dimension.Width);
+        System.out.println("The width of the secondary content section block is: " + getWidth);
+        System.out.println("The height of the secondary content section block is: " + getHeight);
+
+        List<WebElement> sectionImg = driver.findElements(By.xpath(SecondaryContentIMGXPATH));
+        //Common.waitForElementVisibility(sectionImg);
+        int getIMGHeight = sectionImg.get(0).getSize().getHeight();  //Common.getElementDimensions(sectionImg.get(0), dimension.Height);
+        int getIMGWidth = sectionImg.get(0).getSize().getWidth();  //Common.getElementDimensions(sectionImg.get(0), dimension.Width);
+        System.out.println("The width of the images of secondary content section blocks are: " + getIMGWidth);
+        System.out.println("The height of the images of secondary content section blocks are: " + getIMGHeight);
+        boolean isImgWidthCorrect = getIMGWidth == 357;
+        boolean isImgHeightCorrect = getIMGHeight == 240;
+        Assert.assertTrue(isImgWidthCorrect && isImgHeightCorrect, "The section does not contain 2 columns at 50% each");
+
+        driver.findElement(SecondaryContentXPATH);
+        int count = driver.findElements(SecondaryContentXPATH).size();
+        Assert.assertEquals(count, 4, "Wrong count?");
+        System.out.println("count is correct. Count is: " + count);
+
+
+        //verify 4 images of secondary content, their titles, and content underneath
+
+        //verify each secondary section block has a title
+        String VerifyChildTOCCatTitles = "Verify each secondary content section has a title";
+        Common.beginTest(VerifyChildTOCCatTitles);
+        String testName = "Verify there is a Title for each secondary content section ";
+        System.out.println("Validating Title of each secondary content section: ");
+
+        WebElement events2 = driver.findElement(SecondaryContentTitlesXPATH);
+        boolean AreTitlesDisplayed = Common.isElementPresent(events2);
+        System.out.println("Titles are displayed : " + AreTitlesDisplayed);
+
+        List<WebElement> events1 = driver.findElements(SecondaryContentTitlesXPATH);
+
+        for (int i = 0; i < events1.size(); i++) {
+            events1 = driver.findElements(SecondaryContentTitlesXPATH);
+            String txt = events1.get(i).getText();
+            System.out.println(txt);
+            String[] title = txt.split("Title");
+            Assert.assertEquals(title.length, 1, testName);
+
+        }
+        Common.endTest(VerifyChildTOCCatTitles);
+    }
+
+
+    @Test
+    public void VerifySecondaryContent() {
+
+        //verify each secondary content section has content
+        String testName1 = "Verify each secondary content section has content ";
+        Common.beginTest(testName1);
+        List<WebElement> SecondaryContentSections = driver.findElements(SecondaryContentSectionsXPATH);
+        List<WebElement> SecondaryContent = driver.findElements(SecondaryContentXPATH);
+        AssertJUnit.assertEquals(testName1, SecondaryContentSections.size(), SecondaryContent.size());
+        System.out.println("Verifying each secondary content section has content:");
+        int catCount = SecondaryContentSections.size();
+        int catContentCount = SecondaryContent.size();
+        System.out.println("Count for secondary content sections: " + catContentCount);
+        boolean isImageCountCorrect = catContentCount <= 4;
+        System.out.println("Count for secondary content: " + catContentCount);
+        boolean isCategoryCountCorrect = catCount <= 4;
+        boolean arebothmatching = catContentCount == catCount;
+        AssertJUnit.assertTrue("Image count: ", isImageCountCorrect);
+        AssertJUnit.assertTrue("Category count: ", isCategoryCountCorrect);
+        AssertJUnit.assertTrue("Both counts are matching: ", arebothmatching);
+        System.out.println("Both counts matching, up to 4? =>" + arebothmatching);
+    }
+
+
+    @Test
+    public void VerifyRelatedAssetsHeader() {
+        driver.navigate().to(getProperty("host") + "de-de/produkte/kalibratoren");
+
+        //verify H2 header
+        String VerifyH2Header = "Verify H2 header, 'Calibration resources'";
+        Common.beginTest(VerifyH2Header);
+
+        Common.waitForPageLoad();
+
+        WebElement h2 = driver.findElement(H2TITLEXPATH);
+        String tagTitle1 = Common.getTxtOfElement(h2);
+        driver.findElement(H2TITLEXPATH).isDisplayed();
+        System.out.println("The H2 title returns as: " + tagTitle1);
+        boolean ish2Correct = tagTitle1.equals("Informationen zur Kalibrierung");
+        Assert.assertTrue(ish2Correct);
+        System.out.println("The H2 title is matching: " + ish2Correct);
+        //verify h2 header is bold
+        String h2title = driver.findElement(By.xpath(H2TITLE)).getCssValue("font-weight");
+        boolean isfPTitleFont = h2title.equals("700");
+        System.out.println("H2 title is bold: " + isfPTitleFont);
+        AssertJUnit.assertTrue("H2 title is not in bold", isfPTitleFont);
+        Common.endTest(VerifyH2Header);
+    }
+
+    @Test
+    public void VerifyRelatedAssets() {
+        String TestName = "Verify Related assets articles are present and displayed'";
+        Common.beginTest(TestName);
+
+        WebElement RelatedAssets = driver.findElement(RelatedAssetsXPATH1);
+        Assert.assertTrue(RelatedAssets.isDisplayed());
+        System.out.println("Related assets articles are displayed :" + RelatedAssets.isDisplayed());
+
+        List<WebElement> myTagsWithId = driver.findElements(RelatedAssetsXPATH1);
+        System.out.println("Total related asset articles: " + myTagsWithId.size());
+        List<WebElement> buttons = driver.findElements(RelatedAssetsXPATH1);
+        for (int i = 0; i < buttons.size(); i++) {
+            WebElement button = buttons.get(i);
+            try {
+                if (button.isDisplayed()) {
+                    System.out.println(button.getText() + " -  is present and displayed");
+
+                } else {
+                    System.out.println(button.getText() + " - is present but not displayed");
+                }
+            } catch (NoSuchElementException e) {
+                System.out.println("Article is not present, hence not displayed as well");
+
+                Common.endTest(TestName);
+            }
+        }
+    }
+
+
+    @Test
+    public void VerifyRelatedAssetsDesc() {
+        String TestName = "Verify Related assets description and link href";
+        Common.beginTest(TestName);
+        WebElement ProcessCalibrators = driver.findElement(ProcessCalibratorsXPATH);
+        String actualString = driver.findElement(RelatedAssetDESCXPATH).getText();
+        Assert.assertTrue(actualString.contains("Verwendung von Fluke Kalibriergeräten "));
+        boolean isDESCLocalized = driver.findElement(ActualStringXPATH).isDisplayed();
+        System.out.println("Description is localized: " + isDESCLocalized);
+
+        System.out.println("Clicking 'Process calibration tasks' link: ");
+        Common.click_js(ProcessCalibrators);
+        Common.waitForPageLoad();
+        String url = driver.getCurrentUrl();
+        System.out.println(driver.getCurrentUrl());
+        boolean pg404 = Common.isPage404ing();
+        String msg = "is it 404?";
+        System.out.println(msg);
+        System.out.println(pg404);
+        boolean isURLCorrect = url.contentEquals(getProperty("host") + "de-de/mehr-erfahren/blog/kalibrierung");
+        System.out.println("URL is correct and page not 404 - " + isURLCorrect);
+
+        Common.navigateBack();
+        Common.endTest(TestName);
+    }
+
+    @Test
+    public void VerifyRelatedAssetsImages() {
+        String VerifyRAIMG = "Verify Related assets images";
+        Common.beginTest(VerifyRAIMG);
+        Common.waitForPageLoad();
+
+        String testName = "Verify each related asset has an image ";
+        List<WebElement> RelatedAssets = driver.findElements(RelatedAssetsXPATH1);
+        List<WebElement> RelatedAssetsIMGs = driver.findElements(RelatedAssetsIMGXPATH);
+        AssertJUnit.assertEquals(testName, RelatedAssets.size(), RelatedAssetsIMGs.size());
+        System.out.println("Verifying each TOC child category has an image:");
+        int catCount1 = RelatedAssets.size();
+        int catImageCount1 = RelatedAssetsIMGs.size();
+        System.out.println("Count for Related assets: " + catImageCount1);
+        boolean isImageCountCorrect = catImageCount1 <= 6;
+        System.out.println("Count for Related asset images: " + catImageCount1);
+        boolean isCategoryCountCorrect = catCount1 <= 6;
+        boolean arebothmatching1 = catImageCount1 == catCount1;
+        AssertJUnit.assertTrue("Count is matching: ", isImageCountCorrect);
+        AssertJUnit.assertTrue("Count is matching: ", isCategoryCountCorrect);
+        AssertJUnit.assertTrue("Both counts are matching: ", arebothmatching1);
+        System.out.println("Both counts matching up to 6?=>" + arebothmatching1);
+
+        Common.endTest(VerifyRAIMG);
+    }
+
+    @Test
+    public void VerifyAltTags_RelatedAssets() {
+        String TestName1 = "Verify alt tags for related assets images";
+        Common.beginTest(TestName1);
+        System.out.println("Validating Alt tags: ");
+        List<WebElement> altTag1 = driver.findElements(By.xpath(altXPATH1));
+        {
+            for (WebElement alt : altTag1) {
+                String x = Common.getImageAltOfElement(alt);
+                boolean checkalt1 = Common.isElementPresent(alt);
+                Assert.assertTrue(checkalt1, "Alt tag not present for all images");
+                System.out.println("'" + x + "'" + " alt tags are present: " + true);
+            }
+        }
+    }
+
+    @Test
+    public void VerifyTitleTags_RelatedAssets() {
+        String TestName = "Verify Title tags for Related assets images";
+        Common.beginTest(TestName);
+        System.out.println("Validating Title tags: ");
+        List<WebElement> titleTag = driver.findElements(By.xpath(altXPATH1));
+
+        {
+            for (WebElement title : titleTag) {
+                String x1 = Common.getTitleAttrOfElement(title);
+                boolean checktitle1 = Common.isElementPresent(title);
+                AssertJUnit.assertTrue("Title tag not present for all images", checktitle1);
+                System.out.println("'" + x1 + "'" + " Title tags are present: " + true);
+
+            }
+            Common.endTest(TestName);
+        }
+    }
+
+    @Test
+    public void Z_VerifyRelatedAssetsRedirects() {
+        //verify related assets hrefs
+        String TestName2 = "Verify each Related assets href is correct";
+        Common.beginTest(TestName2);
+        int count = driver.findElements(RelatedAssetsXPATH1).size();
+        System.out.println("count of related assets: " + count);
+
+        boolean exists = driver.findElements(RelatedAssetsXPATH1).size() == 0;
+        if (!exists) {
+            List<WebElement> tosTag = driver.findElements(RelatedAssetsXPATH1);
+            for (int j = 0; j < tosTag.size(); j++) {
+                tosTag = driver.findElements(RelatedAssetsXPATH1);
+                // Common.moveToElementBeforeClick(tosTag.get(j));
+                Common.click_js(tosTag.get(j));
+                Common.moveToLatestTab();
+                Common.waitForPageLoad();
+                String url = driver.getCurrentUrl();
+                String Title = driver.getTitle();
+                boolean pg404 = Common.isPage404ing();
+                System.out.println("Clicked related asset: " + Title + " - redirect leads to a 404: " + pg404 + " " +  url);
+                Common.navigateBack();
+                Common.waitForPageLoad();
+                driver.navigate().to(getProperty("host") + "de-de/produkte/kalibratoren");
+            }
+        }
+
+        Common.endTest(TestName2);
+    }
+
+    @Test
+    public void VerifyTOC_ChildCategoryRedirects() {
+
+        //verify TOC child category hrefs
+        String TestName3 = "Verify each TOC child category href is correct";
+        Common.beginTest(TestName3);
+        //Asset1
+        int count = driver.findElements(LearnMoreCTAXPATH).size();
+        System.out.println("count of TOC child categories: " + count);
+
+        boolean exists = driver.findElements(LearnMoreCTAXPATH).size() == 0;
+        if (!exists) {
+            List<WebElement> tosTag = driver.findElements(LearnMoreCTAXPATH);
+            for (int j = 0; j < tosTag.size(); j++) {
+                tosTag = driver.findElements(LearnMoreCTAXPATH);
+                //  Common.moveToElementBeforeClick(tosTag.get(j));
+                Common.click_js(tosTag.get(j));
+                Common.moveToLatestTab();
+                Common.waitForPageLoad();
+                String url = driver.getCurrentUrl();
+                String Title = driver.getTitle();
+                boolean pg404 = Common.isPage404ing();
+                System.out.println("Clicked TOC child category: " + Title + " - redirect leads to a 404: " + pg404 + " " +  url);
+                Common.navigateBack();
+                Common.waitForPageLoad();
+                driver.navigate().to(getProperty("host") + "de-de/produkte/kalibratoren");
+
+
+            }
+        }
+    }
+}
